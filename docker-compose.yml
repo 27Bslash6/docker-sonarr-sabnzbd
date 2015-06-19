@@ -1,0 +1,33 @@
+downloads:
+  image: tianon/true
+  volumes:
+    - /mnt/red/Downloads:/volumes/downloads
+
+media:
+  image: tianon/true
+  volumes:
+    - /mnt/green:/volumes/media
+
+sabnzbd:
+  build: sabnzbd
+  restart: always
+  ports:
+    - "8080:8080"
+  volumes:
+    - ./sabnzbd/config:/volumes/config/sabnzbd
+  volumes_from:
+    - downloads
+
+sonarr:
+  build: sonarr
+  restart: always
+  ports:
+    - "8989:8989"
+    - "9898:9898"
+  links:
+    - sabnzbd:sabnzbd
+  volumes:
+    - ./sonarr/config/:/volumes/config/sonarr
+  volumes_from:
+    - downloads
+    - media
